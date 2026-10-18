@@ -120,7 +120,7 @@ When an orchestration begins in a target project, `pi-orchestrator` generates:
 Clone this repository into your agent skills directory:
 
 ```bash
-git clone https://github.com/<your-username>/pi-local-orchestrator.git pi-orchestrator
+git clone https://github.com/vico-png/pi-local-orchestrator.git pi-orchestrator
 ```
 
 ---
