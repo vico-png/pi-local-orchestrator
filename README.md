@@ -11,17 +11,26 @@
 
 ## 🚀 The Core Superpower: Build Projects as Long as You Want
 
-Normally, autonomous AI coding agents hit a hard wall when tasked with large projects:
-* After **60k–80k tokens**, context degradation begins.
-* The model starts **repeating errors, forgetting earlier constraints, hallucinating file paths**, or burning compute in sluggish **compaction loops**.
-* After a few hours, a single-session agent inevitably derails or corrupts the codebase.
+Even when modern agent models support large context windows of **130k–150k tokens**, running extensive projects in a single monolithic session inevitably derails:
+* **The "Context Ceiling" Problem:** As tokens accumulate, models lose needle-in-a-haystack precision, begin repeating mistakes, and eventually trigger **context compaction** (which is painfully slow, degrades prompt adherence, and easily causes infinite loops).
+* **The Planning Optimism Trap:** When designing roadmaps, agents tend to be overly generous about how much work fits into a single phase. A phase estimated at 90k tokens will easily blow past 130k once thinking tokens, diffs, tool calls, and test logs are added.
+
+### 💡 The 50% Safety Margin Rule (Why phases target ~65k–70k tokens)
+
+> [!TIP]
+> **Why this skill targets ~65k–70k tokens even on 130k–150k models:**
+> When the planning agent estimates a phase, it consistently underestimates the real token footprint of execution (assumes a factor of ~2x for reasoning, retries, and verbose command outputs).
+> 
+> * **The Golden Rule:** Always cap phase estimates to roughly **50% of your model's real context limit** (e.g. **~65k–70k tokens** for a 130k–150k model).
+> * **The Result:** The worker works comfortably with generous headroom, executes builds and tests, and finishes cleanly **without ever triggering compaction**.
+> * **Using other models?** If your model has a 64k, 200k, or larger context window, adjust the target limit proportionally in `SKILL.md` (or simply prompt your agent: *"My model supports Xk context, plan phases keeping a 50% safety margin"*).
 
 ### 🔥 How `pi-orchestrator` eliminates project size limits:
 With `pi-orchestrator`, your project can take **5 phases, 20 phases, or 100 phases spanning multiple days**. There is **no upper limit on project complexity**:
 
 * **Clean-Slate Context for Every Phase:** Each phase runs in its own dedicated `pi` process. A phase starts with a **100% fresh context window** (~0 tokens) and reads only what it needs (`plan.md` + the latest entry of `progress.md`).
-* **Compaction-Free Execution:** Because tasks are sliced into verifiable sub-phases (target ~30k-50k tokens), workers finish **without ever needing context compaction**.
-* **Zero Cumulative Degradation:** Phase 15 runs with the exact same crisp, prompt-adherent intelligence as Phase 1.
+* **Compaction-Free Execution:** Because tasks are sliced into verifiable sub-phases (target ~60k-70k with generous headroom), workers finish **without ever needing context compaction**.
+* **Zero Cumulative Degradation:** Phase 20 runs with the exact same crisp, prompt-adherent intelligence as Phase 1.
 
 ---
 

@@ -68,7 +68,11 @@ Cuando el usuario pide orquestar algo:
    prompt, puede trabajar solo.
    **Divide SIN MIEDO** — el plan subestima siempre el consumo real del
    worker (pensamiento + escritura + tool output; asume factor ~2):
-   - Si la fase estimada supera ~65-70k de contexto, dividirla.
+   - Si la fase estimada supera ~65-70k de contexto, dividirla. Aunque los
+     modelos soporten ~130k-150k de ventana máxima, planificar apuntando al
+     ~50% del tope real garantiza que el worker trabaje con holgura para
+     logs, pruebas y razonamiento, y termine SIEMPRE sin compactar. (Si usas
+     un modelo con otro contexto máximo, ajusta las fases al ~50% de su límite).
    - 8 fases pequeñas y verificables valen más que 4 grandes: cada
      sub-fase debe terminar en un estado verificable (build OK, módulo
      funcional) para que la siguiente arranque limpia.
