@@ -9,39 +9,41 @@
 
 ---
 
-## 🚀 The Core Superpower: Build Projects as Long as You Want
+## 💡 What is `pi-orchestrator`?
 
-Even when modern agent models support large context windows of **130k–150k tokens**, running extensive projects in a single monolithic session inevitably derails:
-* **The "Context Ceiling" Problem:** As tokens accumulate, models lose needle-in-a-haystack precision, begin repeating mistakes, and eventually trigger **context compaction** (which is painfully slow, degrades prompt adherence, and easily causes infinite loops).
-* **The Planning Optimism Trap:** When designing roadmaps, agents tend to be overly generous about how much work fits into a single phase. A phase estimated at 90k tokens will easily blow past 130k once thinking tokens, diffs, tool calls, and test logs are added.
+**`pi-orchestrator` is an agent skill that allows you to hand off massive coding projects to the [`pi` CLI](https://github.com/michaellperry/pi) and let it work completely autonomously across sequential phases.**
 
-### 💡 The 50% Safety Margin Rule (Why phases target ~65k–70k tokens)
+Instead of you sitting at your terminal manually opening sessions, copying prompts, and watching an agent degrade after an hour of work:
+1. **You define the goal:** (e.g., *"Build an entire full-stack application with authentication, database migrations, REST endpoints, and integration tests"*).
+2. **The agent designs the plan:** It breaks the work down into atomic, testable phases and writes self-contained prompts for each phase in `<project>/.orchestration/`.
+3. **The orchestrator takes over:** A dedicated orchestrator window opens and executes the whole pipeline autonomously. It spawns each worker in its own **visible PowerShell TUI window**, waits for it to finish, verifies the deliverable, closes the window, and launches the next phase.
+4. **You can close your initial chat:** Once the orchestrator is launched, your interactive session is done. You can watch the workers code live on your screen or walk away.
+
+---
+
+## 🚀 Build Projects as Long as You Want (No Context Limits)
+
+The biggest barrier to building complex software with AI agents is **context exhaustion**:
+* Even when modern models support **130k–150k tokens**, running large projects in a single continuous session inevitably causes performance to collapse.
+* As token counts climb, models lose needle-in-a-haystack precision, begin repeating bugs, hallucinate files, and trigger **painfully slow context compaction loops**.
+* After a few hours, a single-session agent inevitably derails or corrupts the codebase.
+
+### 🔥 How `pi-orchestrator` solves this permanently:
+Your project can require **5 phases, 25 phases, or 100 phases spanning multiple days**. There is **no upper limit on project complexity**:
+
+* **Clean-Slate Context for Every Phase:** Each phase runs in a brand new, isolated `pi` process. A worker starts with a **100% fresh context window** (~0 tokens) and reads only what it needs (`plan.md` + the latest entry of `progress.md`).
+* **Zero Cumulative Degradation:** Phase 20 runs with the exact same speed, precision, and adherence to instructions as Phase 1.
+* **Compaction-Free Execution:** Each phase is sized with safety margins so workers finish their tasks cleanly **without ever needing to compact context**.
+
+### 💡 The 50% Safety Margin Rule (Context Sizing Recommendation)
 
 > [!TIP]
 > **Why this skill targets ~65k–70k tokens even on 130k–150k models:**
-> When the planning agent estimates a phase, it consistently underestimates the real token footprint of execution (assumes a factor of ~2x for reasoning, retries, and verbose command outputs).
+> When planning agents estimate tasks, they consistently underestimate the real token footprint of execution (assumes a factor of ~2x for reasoning, retries, and verbose command outputs).
 > 
 > * **The Golden Rule:** Always cap phase estimates to roughly **50% of your model's real context limit** (e.g. **~65k–70k tokens** for a 130k–150k model).
 > * **The Result:** The worker works comfortably with generous headroom, executes builds and tests, and finishes cleanly **without ever triggering compaction**.
 > * **Using other models?** If your model has a 64k, 200k, or larger context window, adjust the target limit proportionally in `SKILL.md` (or simply prompt your agent: *"My model supports Xk context, plan phases keeping a 50% safety margin"*).
-
-### 🔥 How `pi-orchestrator` eliminates project size limits:
-With `pi-orchestrator`, your project can take **5 phases, 20 phases, or 100 phases spanning multiple days**. There is **no upper limit on project complexity**:
-
-* **Clean-Slate Context for Every Phase:** Each phase runs in its own dedicated `pi` process. A phase starts with a **100% fresh context window** (~0 tokens) and reads only what it needs (`plan.md` + the latest entry of `progress.md`).
-* **Compaction-Free Execution:** Because tasks are sliced into verifiable sub-phases (target ~60k-70k with generous headroom), workers finish **without ever needing context compaction**.
-* **Zero Cumulative Degradation:** Phase 20 runs with the exact same crisp, prompt-adherent intelligence as Phase 1.
-
----
-
-## 💡 What is `pi-orchestrator`?
-
-`pi-orchestrator` is an agent skill for the [`pi` CLI](https://github.com/michaellperry/pi). It automates the end-to-end execution of massive software engineering plans by decoupling the **planning**, **orchestration**, and **worker execution** into a structured, two-session lifecycle:
-
-1. **The Planning Session (Interactive User Session):** You and the agent design the architectural roadmap. The agent breaks down the work into sequential, self-contained phases and pre-generates every phase prompt inside `.orchestration/`. Once you approve, it launches the orchestrator and you can safely close your session.
-2. **The Orchestrator Session (Autonomous Window):** A dedicated, visible agent window that runs a strict loop:
-   $$\text{Launch Worker} \longrightarrow \text{Wait for Completion Flag} \longrightarrow \text{Harvest Summary} \longrightarrow \text{Kill Worker Window} \longrightarrow \text{Next Phase}$$
-   When all phases are finished, it generates a final user report and self-terminates.
 
 ---
 
