@@ -1,0 +1,33 @@
+{
+  "name": "pi-local-orchestrator",
+  "version": "1.0.0",
+  "description": "Agent skill for pi: orchestrate large projects in sequential phases with fresh-context worker sessions in visible pi TUI windows, zero local GPU contention.",
+  "keywords": [
+    "pi-package",
+    "pi-skill",
+    "orchestrator",
+    "agent",
+    "windows",
+    "powershell"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vico-png/pi-local-orchestrator.git"
+  },
+  "homepage": "https://github.com/vico-png/pi-local-orchestrator#readme",
+  "files": [
+    "SKILL.md",
+    "README.md",
+    "LICENSE",
+    "preview.jpeg",
+    "scripts/",
+    "templates/"
+  ],
+  "pi": {
+    "skills": [
+      "."
+    ],
+    "image": "https://raw.githubusercontent.com/vico-png/pi-local-orchestrator/main/preview.jpeg"
+  }
+}
